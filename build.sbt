@@ -22,6 +22,8 @@ scalacOptions ++= Seq(
   "-encoding", "UTF-8"
 )
 
+resolvers += "en-japan Maven OSS" at "http://dl.bintray.com/en-japan/maven-oss"
+
 libraryDependencies ++= Seq(
   "com.github.mariten" % "kanatools-java" % "1.2.0",
   "com.atilika.kuromoji" % "kuromoji-ipadic" % "0.9.0",
