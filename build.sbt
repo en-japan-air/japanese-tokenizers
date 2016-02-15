@@ -1,4 +1,4 @@
-name := "knp-tokenizer"
+name := "japanese-tokenizers"
 description := "Scala Japanese tokenizers."
 organization := "com.enjapan"
 
@@ -35,7 +35,7 @@ libraryDependencies ++= Seq(
 bintrayOrganization := Some("en-japan")
 bintrayRepository := "maven-oss"
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
-bintrayVcsUrl := Some("https://github.com/en-japan/scala-juman-knp.git")
+bintrayVcsUrl := Some("https://github.com/en-japan/japanese-tokenizers.git")
 bintrayPackageLabels := Seq("scala", "japanese", "tokenizers")
 bintrayPackageAttributes ~= (_ ++ Map(
   "issue_tracker_url" -> Seq(bintry.Attr.String("https://github.com/en-japan/japanese-tokenizers/issues")),
