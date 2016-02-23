@@ -4,17 +4,19 @@ jdk:
 - oraclejdk8
 scala:
 - 2.11.7
+- 2.10.6
 cache:
   directories:
   - "$HOME/.ivy2/cache"
   - "$HOME/.sbt/boot/"
 script:
 - sbt ++$TRAVIS_SCALA_VERSION clean coverage test
-- find $HOME/.sbt -name "*.lock" | xargs rm
-- find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
+before_cache:
+- find $HOME/.sbt -name "*.lock" -delete
+- find $HOME/.ivy2 -name "ivydata-*.properties" -delete
 after_success:
-- sbt coveralls
-- test "${TRAVIS_TAG}" && sh "$TRAVIS_BUILD_DIR/.travis.credentials.sh" && sbt publish
+- sbt ++$TRAVIS_SCALA_VERSION coveralls
+- test "${TRAVIS_TAG}" && sh "$TRAVIS_BUILD_DIR/.travis.credentials.sh" && sbt ++$TRAVIS_SCALA_VERSION publish
 env:
   global:
   - secure: 5pTKlnOrIzcEzgGXhtZr/Y/H0+/GUmMVdBlqPfCTADkvA4taAH6vO5Gf27HUJbMMCf+KvaeExGyB06f1SdTbvpECOHGj9cFlTbRbOt4Y4sMADnvWQ+IxnNeBAXSHjNQG3xTTDgWBR87zH92kAxTMLXYpIUrN1Gw7zu+Wu0MdTFrVPgLMLwSLtnGxEXNqMvdTwU4Uej3EjKHalHBzVGAJK2a2QazOr+2gQpyGv+ZUi6OQWkfi7EEmrEgVpeskPYPzjtJ9w78KOwDRe+ilHe+aB3viN9RL6YnGNC7OHKB/Ysh55SszartmqEwCyikn6f1vtUx8iLzq+e3KRFc1ckumZItPciEX1l1NGz8FlAddgFXQ9efWprsNS4ijjjyoEWQQIGTOL77ofmid96RhKyXMkgtief5Izpbg3H+IHoSC/m5dR2/0KEUyAG9V8iuiNnTKm6GzXZ6pCTw9/5vpCMurf9CVreyloGPv3TYgW+2JlOAXqZcbkTXAfAsLW2iHupXKiQRGwa/Ex3pEnIdAxDpZIHb8tGsIrzM0lrO1O2L8INiXYi6z1H60bWvCUokGaCchw+8emjJutxzsZpEKi5jlHz4p7R9ZfYGLfyPxFk+nuJ5Vu0VT2gjpmNIceU1NfLRa/GK/RI6aIqQUeO+zbY7ApF4eNXNyRfi3o26pf+SniEg=
