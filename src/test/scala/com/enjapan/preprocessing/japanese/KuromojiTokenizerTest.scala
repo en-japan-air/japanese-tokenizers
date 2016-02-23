@@ -29,11 +29,12 @@ class KuromojiTokenizerTest extends FunSuite with Matchers {
   }
 
   test("testTokenizeWithStopPos") {
-    val tokenizer = new KuromojiTokenizer(stopPOS = Set(List("助動詞"), List("記号")), stopWords = Set("友達"))
+    val tokenizer = new KuromojiTokenizer(stopPOS = Set(List("助詞"), List("助動詞"), List("記号")), stopWords = Set("友達"))
     val tokens = tokenizer.tokenize("今日は,,東京大学の友達に行った。")
-    tokens should not contain ("行った", "行っ")
-    tokens should not contain ("。", ",,")
-    tokens should not contain ("は", "た")
+    tokens should not contain oneOf ("行った", "行っ")
+    tokens should not contain oneOf ("。", ",,")
+    tokens should not contain oneOf ("は", "た")
+    tokens should not contain ("友達")
     tokens should contain ("行く")
     tokens should contain ("東京大学")
   }
