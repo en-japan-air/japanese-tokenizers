@@ -1,7 +1,6 @@
-package com.enjapan.preprocessing.japanese
+package com.enjapan.preprocessing.japanese.tokenizers
 
 import com.atilika.kuromoji.ipadic.Token
-import com.enjapan.preprocessing.japanese.tokenizers.KuromojiTokenizer
 import org.scalatest.{FunSuite, Matchers}
 
 /**
