@@ -10,7 +10,7 @@ class SentenceSplitter {
 }
 
 object SentenceSplitter {
-  val LINE_SPLITTER_REGEX = """(?:[^「『!?！？。\.\"]*(?:[「『\"][^」』\"]*?[」』\"])?[^!?！？。\.]*)*[!?！？。\.]+)""".r
+  val LINE_SPLITTER_REGEX = """(?:[^「『!?！？。\.\"]*(?:[「『\"][^」』\"]*?[」』\"])?[^!?！？。\.]*)*[!?！？。\.]+""".r
 
   val PARENTHESIS_REGEX = """[（\(][^）\)]+[）\)]""".r
   val QUOTES_REGEX = """[「『].*[!?。！？]+.*[」』]""".r
@@ -63,6 +63,6 @@ object SentenceSplitter {
   }
 
   def splitColloquial(s:String): List[String] = {
-    SentenceSplitter.LINE_SPLITTER_REGEX.findAllIn(s).filter(_.isEmpty).toList
+    SentenceSplitter.LINE_SPLITTER_REGEX.findAllIn(s).filterNot(_.isEmpty).toList
   }
 }
