@@ -10,7 +10,8 @@ class SentenceSplitter {
 }
 
 object SentenceSplitter {
-  val LINE_SPLITTER_REGEX = """(?:[^「『!?！？。\.\"]*(?:[「『\"][^」』\"]*?[」』\"])?[^!?！？。\.]*)*[!?！？。\.]+""".r
+  //FIXME NEEDS fixing
+  val LINE_SPLITTER_REGEX = """(?:[^「『！？。＂]*(?:[「『＂][^」』＂]*[」』＂])?[^！？。]*)+[！？。]+""".r
 
   val PARENTHESIS_REGEX = """[（\(][^）\)]+[）\)]""".r
   val QUOTES_REGEX = """[「『].*[!?。！？]+.*[」』]""".r
@@ -18,32 +19,35 @@ object SentenceSplitter {
   val BLANK_REGEX = """\s+""".r
 
   def normalize(s:String):String = {
-    // TODO check if '.' should be replaced with '。'
-    val conv_op_flags = KanaConverter.OP_HAN_KATA_TO_ZEN_KATA | KanaConverter.OP_HAN_LETTER_TO_ZEN_LETTER
-    KanaConverter.convertKana(s, conv_op_flags)
+    val conv_op_flags = KanaConverter.OP_HAN_KATA_TO_ZEN_KATA | KanaConverter.OP_HAN_ASCII_TO_ZEN_ASCII
+    KanaConverter.convertKana(s.replace(".","。"), conv_op_flags)
   }
 
   def replaceLineBreaks(s:String):String = {
-    // TODO improve with 。！？
-    s.replace("\n", if (s.contains('。')) "" else "。")
+    s.replace("\n", if (List("。","！","？").exists(s.contains)) "" else "。")
   }
 
   def replaceQuestionWithCommas(s:String):String = {
 
-    val sp = s.split("""(\?|？)""")
+    val sp = s.split("？")
 
-    val r = sp.sliding(2).map { case Array(w1,w2) =>
-      val w2s = w2.length
-      if (w2s == 0) {
-        w1
-      } else if (w2s <= 4) {
-        w1 + "、"
-      } else w1 + "？"
-    }.mkString
+    if (sp.size <= 1) {
+      s
+    } else {
+      val r =
+        sp.sliding(2).map { case Array(w1, w2) =>
+          val w2s = w2.length
+          if (w2s == 0) {
+            w1
+          } else if (w2s <= 4) {
+            w1 + "、"
+          } else w1 + "？"
+        }.mkString
 
-    r + (if(s.last == '?'){
-      sp.last.dropRight(1) + "？"
-    } else sp.last)
+      r + (if (s.last == '?') {
+        sp.last.dropRight(1) + "？"
+      } else sp.last)
+    }
   }
 
   def removeParenthesis(s:String):String = {
@@ -63,6 +67,7 @@ object SentenceSplitter {
   }
 
   def splitColloquial(s:String): List[String] = {
-    SentenceSplitter.LINE_SPLITTER_REGEX.findAllIn(s).filterNot(_.isEmpty).toList
+    val fixedString = if (!s.isEmpty && !"。！？".exists( _ == s.last)) s + "。" else s
+    SentenceSplitter.LINE_SPLITTER_REGEX.findAllIn(fixedString).filterNot(_.isEmpty).toList
   }
 }
