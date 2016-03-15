@@ -30,7 +30,7 @@ resolvers += "en-japan Maven OSS" at "http://dl.bintray.com/en-japan/maven-oss"
 libraryDependencies ++= Seq(
   "com.github.mariten" % "kanatools-java" % "1.2.0",
   "com.atilika.kuromoji" % "kuromoji-ipadic" % "0.9.0",
-  "com.enjapan" %% "scala-juman-knp" % "0.0.7",
+  "com.enjapan" %% "scala-juman-knp" % "0.0.8",
   "org.typelevel" %% "cats" % "0.4.0",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )

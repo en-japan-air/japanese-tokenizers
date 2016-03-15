@@ -71,13 +71,9 @@ class KNPTokenizer(val knp:KNP = new KNPCli()) {
 
   def bunsetsuPredicateToTagPredicate(bunsetsu: Bunsetsu): Option[Tag] = {
     //__get_head_tab_object
-    println(">> Bunsetsu")
-    bunsetsu.tags.foreach { t => t.morphemes.foreach(m => print(m.yomi))} ; println
-    val ts = bunsetsu.tags.filter(_.paType.isInstanceOf[Predicate])
-    bunsetsu.tags.foreach { t => t.morphemes.foreach(m => print(m.yomi)); println }
-    println("<< Bunsetsu")
-    /*if (ts.size > 1) throw new TagsException(s"Bunsetsu $bunsetsu contains too many predicate tags. Expected only 1.")
-    else*/ ts.headOption
+    val ts = bunsetsu.tags.filter(_.paTypes.exists(_.isInstanceOf[Predicate]))
+    // FIXME Actually concatenate the tags somehow (see with Mitsu)
+    ts.headOption
   }
 
   def predicateToToken(t: Tag): Xor[PredicateArgumentsSizeException, String] = {
