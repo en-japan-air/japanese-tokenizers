@@ -7,9 +7,16 @@ import org.scalatest.{FunSuite, Matchers}
   */
 class SentenceSplitterTest extends FunSuite with Matchers {
 
+  test("Should simply split sentence") {
+    val split = SentenceSplitter.splitSimple("日本語がチョーーー！！！大好き！でも下手です。へへへ")
+    split should have size 4
+    split should contain theSameElementsInOrderAs List("日本語がチョーーー！！！","大好き！","でも下手です。","へへへ。")
+  }
+
   test("Should find all colloquial sentences.") {
     val s1 = "先日の不満買取センターのキャンペーンで転職サイトについてでていた。そして、それに投稿したら、後日送られてくるアンケートに答えたらポイントが１０００ポイントもらえるものだったので、ちょうど転職サイトを利用したばかりだったので応募したら、今日届いたメールが、名前と電話番号とアドレスを教えて下さい。それを利用します。のようなことがかいてあって、そんなのアンケートじゃないだろうと思って、結局そこを書かないと１０００ポイントもらえないし、エントリーしなければよかったと後悔"
     val split1 = SentenceSplitter.splitColloquial(s1)
+
     val split2 = SentenceSplitter.splitColloquial("日本語が『チョーーー!!!』大好き！でも下手です。へへへ")
     val split3 = SentenceSplitter.splitColloquial("日本語がチョーーー!!!大好き！でも下手です。ははは")
     val split4 = SentenceSplitter.splitColloquial("日本語が。大好き！でも下手です。へへへ")
@@ -17,14 +24,14 @@ class SentenceSplitterTest extends FunSuite with Matchers {
     split1 should have size 4
     split1 should contain theSameElementsInOrderAs List("先日の不満買取センターのキャンペーンで転職サイトについてでていた。", "そして、それに投稿したら、後日送られてくるアンケートに答えたらポイントが１０００ポイントもらえるものだったので、ちょうど転職サイトを利用したばかりだったので応募したら、今日届いたメールが、名前と電話番号とアドレスを教えて下さい。","それを利用します。","のようなことがかいてあって、そんなのアンケートじゃないだろうと思って、結局そこを書かないと１０００ポイントもらえないし、エントリーしなければよかったと後悔。")
 
-    split4 should have size 4
-    assertResult(split4)(List("日本語が。", "大好き！", "でも下手です。","へへへ。"))
+    split4 should have size 3
+    assertResult(split4)(List("日本語が。", "大好き！でも下手です。","へへへ。"))
 
     split2 should have size 3
-    assertResult(split2)(List("日本語が『チョーーー!!!』大好き！", "でも下手です。へへへ。"))
+    assertResult(split2)(List("日本語が『チョーーー』大好き！", "でも下手です。", "へへへ。"))
 
-    split3 should have size 4
-    assertResult(split3)(List("日本語がチョーーー!!!", "大好き！", "でも下手です。","ははは。"))
+    split3 should have size 2
+    assertResult(split3)(List("日本語がチョーーー！！！大好き！でも下手です。","ははは。"))
 
   }
 

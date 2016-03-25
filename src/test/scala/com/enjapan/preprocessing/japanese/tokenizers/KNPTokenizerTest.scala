@@ -1,6 +1,7 @@
 package com.enjapan.preprocessing.japanese.tokenizers
 
-import com.enjapan.knp.models.{PredicateArgumentAnalysis, Pas, Tag}
+import cats.data.Xor
+import com.enjapan.knp.models.{Pas, PredicateArgumentAnalysis, Tag}
 import com.enjapan.preprocessing.exceptions.PredicateArgumentsSizeException
 import org.scalatest.{FunSuite, Matchers}
 
@@ -12,39 +13,37 @@ class KNPTokenizerTest extends FunSuite with Matchers {
   val knpTokenizer = new KNPTokenizer()
 
   test("Should fail on no predicate arguments") {
-    intercept[PredicateArgumentsSizeException] {
-      knpTokenizer.predicateToToken(new Tag(0, "", "", null, Seq(), Map(), Seq(), None))
-    }
+    val res = knpTokenizer.predicateToToken(new Tag(0, "", "", null, List(), Map(), List(), None))
+    res.swap.getOrElse(throw new Exception("Should not fail")) shouldBe a[PredicateArgumentsSizeException]
   }
 
   test("Should modal predicate containing all modals") {
     val cfid = "cfid"
-    val tag = new Tag(0, "", "", null, Seq(), KNPTokenizer.MODALS.map(value => (value, ""))
-      .toMap, Seq(), Some(new Pas(cfid, Map())))
+    val tag = new Tag(0, "", "", null, List(), KNPTokenizer.MODALS.map(value => (value, ""))
+      .toMap, List(), Some(new Pas(cfid, Map())))
     val modalPredicate = knpTokenizer.predicateToToken(tag)
-    modalPredicate should be(("-" + KNPTokenizer.MODALS.mkString("-")) + cfid)
+    modalPredicate shouldBe Xor.Right(("-" + KNPTokenizer.MODALS.mkString("-")) + cfid)
   }
 
   test("Should modal predicate containing only cfid") {
     val cfid = "cfid"
-    val tag = new Tag(0, "", "", null, Seq(), Map(), Seq(), Some(new Pas(cfid, Map())))
+    val tag = new Tag(0, "", "", null, List(), Map(), List(), Some(new Pas(cfid, Map())))
     val modalPredicate = knpTokenizer.predicateToToken(tag)
-    modalPredicate should be(cfid)
+    modalPredicate shouldBe Xor.Right(cfid)
   }
 
   test("Should fail predicate to PA on no predicate arguments") {
-    intercept[PredicateArgumentsSizeException] {
-      knpTokenizer.predicateToPATokens(Set())(new Tag(0, "", "", null, Seq(), Map(), Seq(), None))
-    }
+    val res = knpTokenizer.predicateToPATokens(Set())(new Tag(0, "", "", null, List(), Map(), List(), None))
+    res.swap.getOrElse(throw new Exception("Should not fail")) shouldBe a[PredicateArgumentsSizeException]
   }
 
   test("Should return PA tokens for all PA arguments") {
     val cfid = "cfid"
     val tag = new Tag(
-      0, "", "", null, Seq(),
-      Map("否定表現" -> ""), Seq(),
+      0, "", "", null, List(),
+      Map("否定表現" -> ""), List(),
       Some(new Pas(cfid, Map("test" -> new PredicateArgumentAnalysis("relname", "reltype", "argword", 0, "0")))))
-    val tokens = knpTokenizer.predicateToPATokens(Set())(tag)
+    val tokens = knpTokenizer.predicateToPATokens(Set())(tag).getOrElse(throw new Exception("not right"))
     tokens should have size 1
     tokens.head should be("-否定表現cfid_argword_relname")
   }
@@ -52,14 +51,14 @@ class KNPTokenizerTest extends FunSuite with Matchers {
   test("Should filter arguments by relation surface") {
     val cfid = "cfid"
     val tag = new Tag(
-      0, "", "", null, Seq(),
-      Map("否定表現" -> ""), Seq(),
+      0, "", "", null, List(),
+      Map("否定表現" -> ""), List(),
       Some(new Pas(cfid, Map(
         "test" -> new PredicateArgumentAnalysis("relname", "reltype", "argword", 0, "0"),
         "test2" -> new PredicateArgumentAnalysis("nottobetakenintoaccount", "reltype", "argword", 0, "0")
       )))
     )
-    val tokens = knpTokenizer.predicateToPATokens(Set("relname"))(tag)
+    val tokens = knpTokenizer.predicateToPATokens(Set("relname"))(tag).getOrElse(throw new Exception("not right"))
     tokens should have size 1
     tokens.head should be("-否定表現cfid_argword_relname")
   }
@@ -98,6 +97,6 @@ class KNPTokenizerTest extends FunSuite with Matchers {
 
 
     val tokens = knpTokenizer.parseKnp(knpOutput.lines.toIterable) map knpTokenizer.tokenizePredicateWithPA(Set.empty)
-    tokens should be ('right)
+    tokens should be('right)
   }
 }

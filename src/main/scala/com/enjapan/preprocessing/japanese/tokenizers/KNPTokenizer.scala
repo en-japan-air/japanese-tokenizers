@@ -65,7 +65,7 @@ class KNPTokenizer(val knp:KNP = new KNPCli()) {
 
   def filterPredicateTags(bList: BList): IndexedSeq[Tag] = {
     bList
-      .bunsetsuList.filter(_.paType.isInstanceOf[Predicate])
+      .bunsetsuList.filter(_.paTypes.exists(_.isInstanceOf[Predicate]))
       .flatMap(bunsetsuPredicateToTagPredicate)
   }
 
