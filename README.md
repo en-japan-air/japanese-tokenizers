@@ -11,7 +11,7 @@ In your `build.sbt`:
 ```
 resolvers += "en-japan Maven OSS" at "http://dl.bintray.com/en-japan/maven-oss"
 
-libraryDependencies += "com.enjapan" %% "japanese-tokenizers" % "0.0.1"
+libraryDependencies += "com.enjapan" %% "japanese-tokenizers" % "0.0.5"
 ```
 
 ## How to use
